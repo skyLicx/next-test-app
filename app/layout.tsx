@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import GlobalHeader from "./global-header";
 import Script from "next/script";
@@ -48,7 +49,9 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        <GtmRouteTracker />
+        <Suspense fallback={null}>
+          <GtmRouteTracker />
+        </Suspense>
         <GlobalHeader />
         {children}
         <div>footer</div>
