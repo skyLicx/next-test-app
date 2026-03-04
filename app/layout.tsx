@@ -5,6 +5,7 @@ import "./globals.css";
 import GlobalHeader from "./global-header";
 import Script from "next/script";
 import GtmRouteTracker from "./components/GtmRouteTracker";
+import MessageViewport from "./components/MessageViewport";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +53,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <GtmRouteTracker />
         </Suspense>
+        <MessageViewport />
         <GlobalHeader />
         {children}
         <div>footer</div>
