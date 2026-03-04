@@ -6,6 +6,7 @@ import GlobalHeader from "./global-header";
 import Script from "next/script";
 import GtmRouteTracker from "./components/GtmRouteTracker";
 import MessageViewport from "./components/MessageViewport";
+import GlobalLoading from "./components/GlobalLoading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const GTM_ID = 'GTM-MPNTBQHW';
+  const GTM_ID = "GTM-MPNTBQHW";
   return (
     <html lang="en" suppressHydrationWarning>
       <Script id="google-tag-manager" strategy="afterInteractive">
@@ -52,6 +53,9 @@ export default function RootLayout({
         </noscript>
         <Suspense fallback={null}>
           <GtmRouteTracker />
+        </Suspense>
+        <Suspense fallback={null}>
+          <GlobalLoading />
         </Suspense>
         <MessageViewport />
         <GlobalHeader />

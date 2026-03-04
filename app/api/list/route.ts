@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   const start = (page - 1) * pageSize;
   const list = mockData.slice(start, start + pageSize);
 
-  await sleep(1000);
+  await sleep(2000);
   return NextResponse.json({
     code: 0,
     message: "ok",
