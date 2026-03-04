@@ -6,7 +6,6 @@ function sleep(ms: number) {
     setTimeout(resolve, ms);
   });
 }
-
 /** 模拟当前用户账户信息（示例）。 */
 function getMockAccountInfo(): AccountInfo {
   return {
@@ -20,8 +19,8 @@ export async function GET() {
   const data = getMockAccountInfo();
   await sleep(2000);
   return NextResponse.json({
-    code: 20,
-    message: "ok1",
+    code: 0,
+    message: "ok",
     data,
   });
 }
