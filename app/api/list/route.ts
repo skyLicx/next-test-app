@@ -1,26 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateMockListData } from "@/lib/mock-list-data";
 
-/** 模拟列表项。 */
-interface MockItem {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: string;
+const mockData = generateMockListData();
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
-
-/** 生成模拟数据（100 条）。 */
-function generateMockData(): MockItem[] {
-  return Array.from({ length: 100 }, (_, i) => ({
-    id: i + 1,
-    title: `Item ${i + 1}`,
-    description: `This is the description for item ${i + 1}.`,
-    createdAt: new Date(
-      Date.now() - (99 - i) * 24 * 60 * 60 * 1000,
-    ).toISOString(),
-  }));
-}
-
-const mockData = generateMockData();
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -35,6 +21,7 @@ export async function GET(request: NextRequest) {
   const start = (page - 1) * pageSize;
   const list = mockData.slice(start, start + pageSize);
 
+  await sleep(1000);
   return NextResponse.json({
     code: 0,
     message: "ok",

@@ -41,17 +41,26 @@ export default async function ListPage({
           <li
             key={item.id}
             style={{
-              padding: "16px 20px",
               borderBottom: "1px solid #eee",
             }}
           >
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>{item.title}</div>
-            <div style={{ color: "#888", fontSize: 14 }}>
-              {item.description}
-            </div>
-            <div style={{ color: "#aaa", fontSize: 12, marginTop: 4 }}>
-              {new Date(item.createdAt).toLocaleDateString()}
-            </div>
+            <Link
+              href={`/list/${item.id}`}
+              style={{
+                display: "block",
+                padding: "16px 20px",
+                textDecoration: "none",
+                color: "inherit",
+              }}
+            >
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>{item.title}</div>
+              <div style={{ color: "#888", fontSize: 14 }}>
+                {item.description}
+              </div>
+              <div style={{ color: "#aaa", fontSize: 12, marginTop: 4 }}>
+                {new Date(item.createdAt).toLocaleDateString()}
+              </div>
+            </Link>
           </li>
         ))}
       </ul>

@@ -26,3 +26,10 @@ export function getListData(params: { page?: number; pageSize?: number } = {}) {
     params: { page: params.page ?? 1, pageSize: params.pageSize ?? 10 },
   });
 }
+
+/**
+ * 根据 id 获取单条列表项详情。
+ */
+export function getListItemById(id: number) {
+  return http.get<ListItem>(`/api/list/${id}`);
+}
