@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import GlobalHeader from "./global-header";
+import Providers from "./providers";
 import Script from "next/script";
 import GtmRouteTracker from "./components/GtmRouteTracker";
 import MessageViewport from "./components/MessageViewport";
@@ -59,7 +60,7 @@ export default function RootLayout({
         </Suspense>
         <MessageViewport />
         <GlobalHeader />
-        {children}
+        <Providers>{children}</Providers>
         <div>footer</div>
       </body>
     </html>

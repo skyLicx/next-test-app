@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { getListData, ListResponse } from "@/lib/api/list-api";
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { getListData, type ListResponse } from "@/lib/api/list-api";
 
 /* ─────────────────────────────────────────
    骨架屏：模拟列表行的占位动画
@@ -198,29 +200,51 @@ function Pagination({
 ───────────────────────────────────────── */
 interface ListClientProps {
   initialData: ListResponse;
+  initialPage: number;
   pageSize: number;
 }
 
-export default function ListClient({ initialData, pageSize }: ListClientProps) {
-  const [data, setData] = useState<ListResponse>(initialData);
-  const [loading, setLoading] = useState(false);
+function getPageFromSearchParams(searchParams: URLSearchParams): number {
+  const pageStr = searchParams.get("page");
+  return Math.max(1, parseInt(pageStr ?? "1", 10) || 1);
+}
+
+export default function ListClient({
+  initialData,
+  initialPage,
+  pageSize,
+}: ListClientProps) {
+  const searchParams = useSearchParams();
+  const pageFromUrl = getPageFromSearchParams(searchParams);
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+
+  // 与 URL 同步：从详情返回或浏览器前进/后退时，以 URL 为准
+  useEffect(() => {
+    setCurrentPage(pageFromUrl);
+  }, [pageFromUrl]);
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["list", "page", currentPage, pageSize],
+    queryFn: () => getListData({ page: currentPage, pageSize }).promise,
+    initialData: currentPage === initialPage ? initialData : undefined,
+    placeholderData: (prev) => prev, // 翻页时保留上一页数据，减少闪烁
+    // 列表单独 1 分钟缓存
+    staleTime: 60 * 1000,
+  });
 
   const handlePageChange = useCallback(
-    async (page: number) => {
-      if (loading || page === data.page) return;
-      setLoading(true);
-      try {
-        const { promise } = getListData({ page, pageSize });
-        const result = await promise;
-        setData(result);
-        // 同步更新地址栏（不触发路由跳转 / 不引发 GlobalLoading）
-        window.history.pushState(null, "", `/list?page=${page}`);
-      } finally {
-        setLoading(false);
-      }
+    (page: number) => {
+      if (isFetching || page === data?.page) return;
+      setCurrentPage(page);
+      // 仅更新 URL，不触发 Next 导航，避免重复请求（数据由 React Query 拉取）
+      window.history.pushState(null, "", `/list?page=${page}`);
     },
-    [loading, data.page, pageSize],
+    [isFetching, data?.page],
   );
+
+  if (!data) {
+    return <ListSkeleton rows={pageSize} />;
+  }
 
   return (
     <>
@@ -230,7 +254,7 @@ export default function ListClient({ initialData, pageSize }: ListClientProps) {
       </p>
 
       {/* 列表 / 骨架屏 */}
-      {loading ? (
+      {isFetching ? (
         <ListSkeleton rows={pageSize} />
       ) : (
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
@@ -265,7 +289,7 @@ export default function ListClient({ initialData, pageSize }: ListClientProps) {
         currentPage={data.page}
         totalPages={data.totalPages}
         onPageChange={handlePageChange}
-        disabled={loading}
+        disabled={isFetching}
       />
     </>
   );

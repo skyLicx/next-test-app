@@ -18,7 +18,11 @@ export default async function ListPage({
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
         Paginated List
       </h1>
-      <ListClient initialData={data} pageSize={pageSize} />
+      <ListClient
+        initialData={data}
+        initialPage={currentPage}
+        pageSize={pageSize}
+      />
     </main>
   );
 }
